@@ -12,10 +12,10 @@ dna = 'ATGGCCTTT'
 dna = 'ATGGCCTTT'
 pos = 0
 
-for i in range(0,len(dna),3):
-    for frame in range(3):
-        print(pos, frame, dna[pos])
-        pos += 1
+for i in range(0,len(dna),3): # most difficult thing 
+    for frame in range(3): # for in with range, you want a frame that is within range of each nt
+        print(pos, frame, dna[pos]) 
+        pos += 1 # move on to the next
 """
 
 """

@@ -11,9 +11,9 @@
 aas = 'ACDEFGHIKLMNPQRSTVWY'
 total = 0
 
-for i in range(len(aas)):
-    for j in range(i + 1, len(aas)):
-        total += 1
+for i in range(len(aas)): # for i with range read
+    for j in range(i + 1, len(aas)): # we want to add 1 shift over
+        total += 1 # counts the total nuber of combinations
         print(aas[i], aas[j])
 print(total)
 """

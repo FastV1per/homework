@@ -15,7 +15,7 @@ for i in range(1,101):
     elif i % 5 == 0 and i % 3 != 0:
         print("Buzz")
     elif i % 3 == 0 and i % 5 == 0: # meaning i is a multiple of both 
-        print("FizzBuzz")
+        print("FizzBuzz") # we want the fizz to buzz
     else:
         print(i)
 """

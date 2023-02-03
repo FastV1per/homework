@@ -10,12 +10,12 @@ dna = 'ACAGAGCCAGCAGATATACAGCAGATACTAT'
 total = len(dna)
 count = 0
 
-for i in range(total):
-    nt = dna[i]
+for i in range(total): # this was a doozy 
+    nt = dna[i] # needed to index it since dna is a string
     if nt == 'C' or nt == 'G':
-        count = count + 1
-gc_content = count/float(total)
-print(f'{gc_content:.2f}')
+        count = count + 1 # want to count G and C as a integer
+gc_content = count/float(total) # making sure to float just in case
+print(f'{gc_content:.2f}') # format for 2 decimal points
 '''
 
 """

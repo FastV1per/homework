@@ -9,15 +9,15 @@
 # Note: set random.seed() if you want repeatable random numbers
 
 '''
-import random
+import random # import the random function
 
 length = 30
 total = length
-count = 0
+count = 0 # gotta love containers
 
 
 for i in range(length):
-    r = random.random()
+    r = random.random() # oddly looks like the one in the tutorial 
     if r < 0.66:
         count += 1
         print('A', end = '')
@@ -28,7 +28,7 @@ for i in range(length):
         print('C', end = '')
     else:
         print('G', end = '')
-at_content = count/total
+at_content = count/total # i was told that commenting would look nice here
 print(length, at_content)
 '''
 

@@ -8,7 +8,7 @@
 dna = 'ACTGAAAAAAAAAAA'
 
 '''
-dna = 'ACTGAAAAAAAAAAA'[::-1]
+dna = 'ACTGAAAAAAAAAAA'[::-1] # i felt very smart when I could manipulate the string to read reverse
 
 for i in dna:
     if i == 'A':

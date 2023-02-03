@@ -8,9 +8,9 @@
 
 '''
 n = 5
-sum = 0
+sum = 0 # Put containers containers, containers, containers!!
 fac = 1
-for i in range(1,n+1):
+for i in range(1,n+1): # +1 is going to keep adding thorough the loop of the equations
     sum +=i
     fac *=i
 print(n,sum,fac)
