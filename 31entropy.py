@@ -24,7 +24,7 @@ for i in range(len(l)):
 	
 #Create a test to make sure the sum is euqal to 1.0
 if math.isclose(tot, 1.0, abs_tol=.01) == False:
-	print('Probabilites do not sum to 1.0. Please try again.')
+	print('False')
 else:
 	H = 0
 	for i in range(len(l)):
