@@ -14,45 +14,44 @@
 
 # Note: you will not get exactly the same results as the command line below
 
-#import sys for command line arguments
 import sys
 import random
 
-#create a list from command line without leading title
+# we create a list that doesn't have the title 
 list = sys.argv[1:]
 
-#list should have a length of 3, with the following variables
-genome_size = int(list[0])
+# separate each item with the following variables 
+gen_size = int(list[0])
 read_num = int(list[1])
-read_length = int(list[2])
+read_len = int(list[2])
 
-#make the genome list with 0s
-genome = []
-genome = [0] * genome_size
+# create an emtpy container for genome size
+gen = []
+gen = [0] * gen_size
 
-#make positions in the genome according to read number
+# position the genome according to read number
 for pos in range(read_num):
-	begin = random.randint(0, genome_size - read_length)
+	begin = random.randint(0, gen_size - read_len)
 	
 	#add one to the position in the genome where hits overlap
-	for hit in range(begin, begin + read_length):
-		genome[hit] += 1
+	for h in range(begin, begin + read_len):
+		gen[h] += 1
 	
-#intialize minimum, maximum and sum
-mini = genome[read_length - 1]
-maxi = genome[read_length - 1]
+# find minimum, maximum and sum
+mini = gen[read_len - 1]
+maxi = gen[read_len - 1]
 sum = 0
 
-#go thru the genome at the read positions
-for count in genome[read_length - 1:-read_length]:
-	if mini > count: 
-		mini = count
-	if maxi < count:
-		maxi = count
-	sum += count
+# the genome at the read positions
+for c in gen[read_len - 1:-read_len]:
+	if mini > c: 
+		mini = c
+	if maxi < c:
+		maxi = c
+	sum += c
 
-#find the average coverage, ignoring the ends
-average = sum / (genome_size - 2 * read_length)
+# average coverage, ignoring the ends
+average = sum / (gen_size - 2 * read_len)
 	
 print(mini, maxi, f'{average:.5}')
 	
