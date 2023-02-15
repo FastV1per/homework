@@ -10,32 +10,51 @@
 # Variation: try making the calendar a list
 # Variation: try making the birthdays a list
 
+# Dear Lilith, if you're reading this, I'm sorry. My vm destroyed itself while I was playing around with it and I didn't save our work. Thankfully I have a blank slate and can do this another, easier way. 
+
+# From your student, Sam
+
 import sys
 import random
 
 list = sys.argv[1:]
 
+# split this into two list
 days = int(list[0])
 people = int(list[1])
 
-num_simulated = 10000
-num_double = 0
+prob = 0 
 
-birth = [0] * days
+# We want to try this multiple times by doing multiple trials
+trials = 1000
 
-for friends in range(people):
-	birthdays = friends % days
-	birth[birthdays] +=1
-	if birth[birthdays] > 1:
-		return True
-return False
+# we must create a list of random days to put into trial 
+for days_assigned in range(trials):
+	doubles = 0
+	birthdays = []
+	
+	for i in range(days):
+		birthdays.append(0) 
 
-for i in range(num_simulated):
-	if birth == True:
-		num_double +=1
-prob = num_double/num_simulated
+# Assign people with birthdays
+	for birthday in range(people):
+		birth_day = random.randint(0,days-1)
+		birthdays[birth_day] = birthdays[birth_day] + 1
 
-print(prob)
+# Going to see who's got the same birthday
+	for twins in birthdays:
+		if twins > 1:
+			doubles += 1
+		if doubles > 0:
+			prob += 1
+			match = 0
+			break
+
+# Calculating probability
+birth_paradox = prob/ trials
+
+print(f'{birth_paradox:.3}')
+	  
 
 
 """
