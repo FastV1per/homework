@@ -13,29 +13,28 @@
 import sys
 import math
 
-#
-l = sys.argv[1:]
-tot = 0
+# making sure it is put into a list
+inputted_list = sys.argv[1:]
+total_value = 0
 
 # Want to float the numbers but also the total count for the equation
-for i in range(len(l)):
-	l[i] = float(l[i])
-	tot += l[i]
+
+for list_value in range(len(inputted_list)):
+	try:
+		inputted_list[list_value] = float(inputted_list[list_value])
+		total_value += inputted_list[list_value]
+	except:
+		print("This is not it")
 	
 #Create a test to make sure the sum is euqal to 1.0
-if math.isclose(tot, 1.0, abs_tol=.01) == False:
-	print('False')
+
+if math.isclose(total_value, 1.0, abs_tol=.01) == False:
+	print('Does not sum up to 1')
 else:
 	H = 0
-	for i in range(len(l)):
-		H = H + -(l[i] * math.log(l[i],2))
+	for entropy in range(len(inputted_list)):
+		H = H + -(inputted_list[list_value] * math.log(inputted_list[list_value],2))
 	print(f'{H:.4}') # If the test passed it will output the results
-
-
-
-
-	
-
 
 
 """

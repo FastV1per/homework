@@ -43,12 +43,12 @@ maxi = gen[read_len - 1]
 sum = 0
 
 # the genome at the read positions
-for c in gen[read_len - 1:-read_len]:
-	if mini > c: 
-		mini = c
-	if maxi < c:
-		maxi = c
-	sum += c
+for read_pos in gen[read_len - 1:-read_len]:
+	if mini > read_pos: 
+		mini = read_pos
+	if maxi < read_pos:
+		maxi = read_pos
+	sum += read_pos
 
 # average coverage, ignoring the ends
 average = sum / (gen_size - 2 * read_len)

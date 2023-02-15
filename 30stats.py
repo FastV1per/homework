@@ -11,40 +11,42 @@ import sys
 
 # Need containers and we need to shift the list to only read the values
 
-l = sys.argv[1:]
+list_values = sys.argv[1:] # I was told that using descriptive functions makes me a good coder
+
 count = 0
 sum = 0
-l.sort() # This is for the median 
+
+list_values.sort() # This is for the median 
 
 
 # We need to convert our list of strings into a list of integers
 
-for i in range(len(l)):
-	l[i] = int(l[i])
+for integers in range(len(list_values)):
+	list_values[integers] = int(list_values[integers])
 	count += 1
-	sum += l[i]
+	sum += list_values[integers]
 
 mean = sum/count # Equation for the mean
 
 # We need to find the middle of the list
 
-mid = (len(l) -1)//2
+middle = (len(list_values) -1)//2
 
 # Set up a comparison loop to get the middle of the list
 
-if len(l) % 2 == 1:
-	med = l[mid]
+if len(list_values) % 2 == 1:
+	medium = list_values[middle]
 else:
-	med = (l[mid] +l[mid + 1]) / 2
+	medium = (list_values[middle] +list_values[middle + 1]) / 2
 	
-# Next, find the Std with another for loop (note: we could combine this loop to the previous loop, but for clarity sake, do it this way)
+# Next, find the Std with another for loop (note: we could combine this loop to the previous loop, but for clarity sake,because my dumb butt is going to look back at this, do it this way)
 
 tophalf = 0
 
-for i in range(len(l)):
-	x = 0 # x equals to the count of the list in a std formula
-	x = (mean - l[i]) ** 2
-	tophalf += x 
+for stdev in range(len(list_values)):
+	tophalf_val = 0 # equals to the count of the list in a std formula
+	tophalf_val = (mean - list_values[stdev]) ** 2
+	tophalf += tophalf_val 
 
 # Euqation for std
 std = ((tophalf/count) ** .5)
@@ -52,11 +54,11 @@ std = ((tophalf/count) ** .5)
 # Print out all values
 
 print('Count:', count)
-print('Minmimum', float(min(l)))
-print('Maximum', float(max(l)))
+print('Minmimum', float(min(list_values)))
+print('Maximum', float(max(list_values)))
 print('Mean', f'{mean:.3f}')
 print('Std. dev:', f'{std:.3f}')
-print('Median', f'{med:.3f}') 
+print('Median', f'{medium:.3f}') 
 
 """
 python3 30stats.py 3 1 4 1 5
