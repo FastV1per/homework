@@ -21,17 +21,101 @@
 # Hint: create a function for hydrophobic alpha-helix
 # Hint: use the same function for both signal peptide and transmembrane
 
+import sys
+import mcb185
 
-def KD():
-	print('some equation')
+# create a KD calculation:
 
-KD()
+def KD_equ(smseq):
 
-
-def hydroalph():
-	print('some equation')
+	KD = 0 
 	
-hydroalph()
+	for aa in smseq:
+		if aa =='I':
+			KD += 4.5
+		elif aa == 'V':
+			KD += 4.2
+		elif aa == 'L':
+			KD += 3.8
+		elif aa == 'F':
+			KD += 2.8
+		elif aa == 'C':
+			KD += 2.5
+		elif aa == 'M':
+			KD += 1.9
+		elif aa == 'A':
+			KD += 1.8
+		elif aa == 'G':
+			KD += -0.4
+		elif aa == 'T':
+			KD += -0.7
+		elif aa == 'S':
+			KD += -0.8
+		elif aa == 'W':
+			KD += -0.9
+		elif aa == 'Y':
+			KD += -1.3
+		elif aa == 'P':
+			KD += -1.6
+		elif aa == 'H':
+			KD += -3.2
+		elif aa == 'E':
+			KD += -3.5
+		elif aa == 'Q':
+			KD += -3.5
+		elif aa == 'D':
+			KD += -3.5
+		elif aa == 'N':
+			KD += -3.5
+		elif aa == 'K':
+			KD += -3.9
+		elif aa == 'R':
+			KD = -4.5
+		else:
+			continue
+	return KD
+
+
+# create an hydrophobic alpha-helix function
+
+def alpha_h(smseq):
+	
+	proline = 0
+	for aa in smseq:
+		if aa == 'P':
+			proline += 1
+		else:
+			continue
+	return proline
+	
+
+# copy and match function with signal peptide and transmembrane 
+
+proteome = sys.argv[1]
+
+for name_def, seq in mcb185.read_fasta(proteome):
+
+	peptide = 0
+	transmem = 0 
+	
+	sigpep = 8
+	for pos in range(0, 30 - sigpep + 1):
+		smseq = seq[pos:pos + sigpep]
+		KD = KD_equ(smseq)
+		proline = alpha_h(smseq)
+		if KD / sigpep > 2.5 and proline == 0:
+			peptide += 1
+	
+	hydro_reg = 11
+	for pos in range(31, len(seq) - hydro_reg + 1):
+		smseq = seq[pos:pos + hydro_reg]
+		KD = KD_equ(smseq)
+		proline = alpha_h(smseq)
+		if KD / hydro_reg > 2.0 and proline == 0:
+			transmem += 1
+	
+	if peptide != 0 and transmem != 0:
+		print(name_def)
 
 """
 python3 41transmembrane.py ~/DATA/E.coli/GCF_000005845.2_ASM584v2_protein.faa.gz

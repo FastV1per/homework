@@ -85,7 +85,7 @@ print('V', V, V/total)
 print('W', W, W/total)
 print('Y', Y, Y/total)
 
-
+fp.close()
 
 """
 # Another strategy is to make the amino acid into a list and then assigning them values
