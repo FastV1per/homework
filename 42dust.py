@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # 42dust.py
 
 # Write a program that performs entropy filtering on nucleotide fasta files
@@ -11,6 +13,7 @@
 # Hint: make up some fake sequences for testing
 
 # Note: don't worry about "centering" the entropy on the window (yet)
+
 
 import sys
 import mcb185
