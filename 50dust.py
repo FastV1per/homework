@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # 50dust.py
 
 # Write a better version of your 42dust.py program
@@ -14,91 +16,94 @@
 
 # Hint: make a smaller file for testing (e.g. e.coli.fna in the CLI below)
 
-# BRAINSTORMING not finished 
+# BRAINSTORMING DON'T GRADE
+
+# import packages  
 import argparse
 import mcb185
 import math
+import random
 
-parser = argparse.ArgumentParser(description='Line, word, and byte counts.')
-parser.add_argument('file', type=str, metavar='<path>', help='some file')
-parser.add_argument('-c', '--bytes', action='store_true', help='byte count')
-parser.add_argument('-l', '--lines', action='store_true', help='line count')
-parser.add_argument('-w', '--words', action='store_true', help='word count')
+# Here is the setup
+parser = argparse.ArgumentParser(description ='Entropy Calculator')
+
+
+# The positional argument that is always required 
+parser.add_argument('file', type=str, metavar='<path>', help='fasta file')
+
+# Adding to additonal arugments
+parser.add_argument('-w', required=False, type=int, default=11, metavar='<int>', help='requires a integer value [%(default)i]')
+parser.add_argument('-t', required=False, type=float, default = 1.4, metavar='<float>', help= 'requires a float value [%(default).3f]')
+parser.add_argument('-s', action = 'store_true', help = 'lower-based masking')
+
+# Make sure to finalize the arguments
 arg = parser.parse_args()
 
-if arg.file == '-': fp = sys.stdin
-else:               fp = open(arg.file)
 
-bc = 0
-lc = 0
-wc = 0
-while True:
-	line = fp.readline()
-	if line == '': break
-	bc += len(line)
-	lc += 1
-	wc += len(line.split())
+# I've been told that my dust needs more spice 
+# Calculate entropy of a sequence
 
-print(lc, wc, bc)
-
-
-# create a function for entropy
-
-def entroequ(file, w, threshold):
+def entroequ(window):
 	
-	for defline, seq in mcb185.read_fasta(file):
+	# Create containers for the equation 
+	nts = 'ATCG' # Identifying the nucleotides
+	counts = [0]*4 # how many are in a DNA sequence
+	prob = [] 
 	
-		newseq = ''
+	for remain in window:
+		for nt in nts:
+			if remain == nt: counts[nts.index(nt)] += 1
+			
+	for count in counts:
+		prob.append(count/len(window))
 		
-		for pos in range(len(seq) - w + 1):
-			smseq = seq[pos:pos + w]
 			
-			A = 0
-			T = 0
-			G = 0
-			C = 0
+	# same equation as the previous python code
+	H =  0
+	for probnt in prob:
+		if probnt != 0:
+			H += -(probnt * math.log2(probnt))
 			
-			for nt in smseq:
-				if nt == 'A':
-					A += 1
-				elif nt == 'T':
-					T += 1
-				elif nt == 'G':
-					G += 1
-				elif nt == 'C':
-					C += 1
-					
-			probA = A / w
-			probT = T / w
-			probG = G / w
-			probC = C / w
 			
-			probnts = [probA, probT, probG, probC]
-			
-			# same equation as the previous python code
-			H =  0
-			for probnt in probnts:
-				if probnt != 0:
-					H += -(probnt * math.log2(probnt))
-			
-			if H < threshold:
-				newseq += 'N'
-			else:
-				newseq += smseq[0]
-	return defline, newseq
+	return H
 
 
-# spearate the file 
-file = sys.argv[1]
-w = int(sys.argv[2])
+def sliding(sequ, winlen, threshold):
+
+	file_seq = []
+	
+	for pos in range(len(sequ)-winlen +1):
+	
+		window = sequ[pos:pos + winlen]
+		H = scal(window)
+		
+		if H >= threshold: 
+			file_seq.append(sequ[pos])
+		else:
+			file_seq.append('N')
+		
+		if len(file_seq) >= 60:
+			yield(''.join(file_seq))
+			file_seq = []
+	
+	for nt in range(len(sequ)-winlen + 1, len(sequ)):
+		file_seq.append(sequ[nt])
+		
+		if len(file_seq) >= 60:
+			yeild(''.join(file_seq))
+			file_seq = []
+
+
+# Separating files 
+sequ = sys.argv[1]
+winlen = int(sys.argv[2])
 threshold = float(sys.argv[3])
 
-defline, newseq = entroequ(file, w, threshold)
-
-
-print(defline)
-for pos in range(0, len(newseq), 60):
-	print(newseq[pos:pos + 60])
+for seq in mcb185.read.fasta(sequ):
+	print('>' + sequ[0])
+	for line in sequ[1:]:
+		for nts in sliding(line, winlen, threshold):
+			print(nts)
 	
 """
 python3 50dust.py -w 11 -t 1.4 -s e.coli.fna  | head
