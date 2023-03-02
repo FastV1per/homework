@@ -18,10 +18,8 @@
 
 # import packages  
 import argparse
-import sys
 import mcb185
 import math
-import random
 
 # Here is the setup
 parser = argparse.ArgumentParser(description ='Entropy Calculator')
@@ -42,70 +40,69 @@ arg = parser.parse_args()
 # I've been told that my dust needs more spice 
 # Calculate entropy of a sequence
 
-def entroequ(window):
-	
-	# Create containers for the equation 
-	nts = ['A','T','C','G'] # Identifying the nucleotides
-	counts = [0]*4 # how many are in a DNA sequence
-	prob = [] 
-	H = 0
-	
-	for nt in window:
-		if nt == nts: 
-			counts[nts.index(nt)] += 1
+def entroequ(seq, w):
+	A = 0
+	T = 0
+	G = 0
+	C = 0
 			
-	for count in counts:
-		prob.append(count/len(window))
-		
+	for nt in seq:
+		if nt == 'A':
+			A += 1			
+		elif nt == 'T':
+			T += 1
+		elif nt == 'G':
+			G += 1
+		elif nt == 'C':
+			C += 1
+					
+	probA = A / w
+	probT = T / w
+	probG = G / w
+	probC = C / w
+			
+	probnts = [probA, probT, probG, probC]
 			
 	# same equation as the previous python code
-	for probnt in prob:
+	H =  0
+	for probnt in probnts:
 		if probnt != 0:
-			H -= probnt * math.log2(probnt)
-			
+			H += -(probnt * math.log2(probnt))
 			
 	return H
 
+window = arg.w // 2
 
-def sliding(sequ, winlen):
 
-	win = sequ[:winlen].upper()
-
-	file_seq = sequ
+# unpacking in for loop
+for defline, seq in mcb185.read_fasta(arg.file):
+	seq = seq.upper()
+	seq2 = list(seq)
+	for line in range(len(seq) -arg.w + 1):
+		wseq = seq[line:line + arg.w]
+		H = entroequ(wseq, arg.w)
+		if H < arg.t:
+			for win in range(arg.w):
+				if arg.lower: 
+					seq2[line + win] = seq2[line + win].lower()
+				else:
+					seq2[line + win] = 'N'
 	
-	
-	for pos in range(len(seq)):
-	
-		if pos in range(len(sequ)-winlen +1):
-			
-			if pos != 0:
-				win = (win[1:]+sequ[pos+winlen-1]).upper()
-				
-			H = entroequ(win)
-			
-		
-			if H < arg.t and arg.s == True:
-				file_seq = file_seq.replace(file_seq[pos:pos+winlen], file_seq[pos:pos + winlen].lower()) 
-
-			elif H < arg.t and arg.s == False:
-				file_seq = file_seq.replace(file_seq[pos:pos+winlen], 'N'*winlen)
-				
-		if (pos + 1) % 60 == 0:
-			yield(file_seq[pos-59:pos+1])
-		
-		if len(sequ) % 60 != 0:
-			yield(file_seq[len(sequ)-(len(sequ) % 60):])
+	seq2 = ''.join(seq2)
+	print('>',defline)
+	for pos in range(0,len(seq2), 60):
+		print(seq2[pos: pos + 60])
 	
 
-
-# Separating files 
-
+'''
 for line in mcb185.read_fasta(arg.file):
 	print('>' + line[0])
 	
 	for seq in line[1:]:
 		for line in sliding(seq,arg.w):
 			print(line)
+'''
+
 	
 """
 python3 50dust.py -w 11 -t 1.4 -s e.coli.fna  | head
