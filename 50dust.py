@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # 50dust.py
 
 # Write a better version of your 42dust.py program
@@ -14,7 +16,8 @@
 
 # Hint: make a smaller file for testing (e.g. e.coli.fna in the CLI below)
 
-# BRAINSTORMING DON'T GRADE
+# I like to dedicate this to steph who has had to explained to me the millionth time why we should reassigned the window and not just be the variable itself.  
+
 
 # import packages  
 import argparse
@@ -40,68 +43,88 @@ arg = parser.parse_args()
 # I've been told that my dust needs more spice 
 # Calculate entropy of a sequence
 
-def entroequ(seq, w):
-	A = 0
-	T = 0
-	G = 0
-	C = 0
-			
-	for nt in seq:
-		if nt == 'A':
-			A += 1			
-		elif nt == 'T':
-			T += 1
-		elif nt == 'G':
-			G += 1
-		elif nt == 'C':
-			C += 1
-					
-	probA = A / w
-	probT = T / w
-	probG = G / w
-	probC = C / w
-			
-	probnts = [probA, probT, probG, probC]
-			
-	# same equation as the previous python code
-	H =  0
-	for probnt in probnts:
-		if probnt != 0:
-			H += -(probnt * math.log2(probnt))
-			
+def entroequ(window):
+
+	# Setting up variables
+	# List of all the nts 
+	nts = ['A', 'T', 'G', 'C']
+	# the count of those nts in a sequence
+	nt_counts = [0]*4 
+	# prob of thpse nts in the sequence
+	nt_probs = []
+	# entropy container 
+	H = 0 # Shannon entropy
+	
+	
+	# Count and index nts
+	for nt in window: 
+		if nt in nts: 
+			nt_counts[nts.index(nt)] += 1
+	
+	# align probs with counts
+	for count in nt_counts: 
+		nt_probs.append(count/len(window))
+	
+	# Entropy equation with probs
+	for prob in nt_probs:
+		if prob != 0: H -= prob * math.log2(prob)
+		
 	return H
-
-window = arg.w // 2
-
-
-# unpacking in for loop
-for defline, seq in mcb185.read_fasta(arg.file):
-	seq = seq.upper()
-	seq2 = list(seq)
-	for line in range(len(seq) -arg.w + 1):
-		wseq = seq[line:line + arg.w]
-		H = entroequ(wseq, arg.w)
-		if H < arg.t:
-			for win in range(arg.w):
-				if arg.lower: 
-					seq2[line + win] = seq2[line + win].lower()
-				else:
-					seq2[line + win] = 'N'
 	
-	seq2 = ''.join(seq2)
-	print('>',defline)
-	for pos in range(0,len(seq2), 60):
-		print(seq2[pos: pos + 60])
+	
+	
+# Filtering for window size
+def shiftwin(seq, winlen):
+	 
+	
+	# Window has sequences now
+	window = seq[:winlen].upper()
+	# Need to copy entire sequence to make it all uppercase
+	fil_seq = seq.upper()
+	
+	# We're going to replace the original sequence with the filtered one
+	for pos in range(len(seq)):
+	
+		# The start is determined by the window's sequence
+		if pos in range(len(seq)-winlen+1):
 	
 
-'''
+			if pos != 0: 
+				window = (window[1:]+seq[pos+winlen-1]).upper()
+		
+			H = entroequ(window)
+
+			
+			# The unmask arguments will convert to lowercase
+			if H < arg.t and arg.s == True:
+				fil_seq = fil_seq.replace(
+					fil_seq[pos:pos+winlen], fil_seq[pos:pos+winlen].lower())
+			
+			# The rest are left alone and are the masked argument
+			elif H < arg.t and arg.s == False:
+				fil_seq = fil_seq.replace(
+					fil_seq[pos:pos+winlen], 'N'*winlen)
+		
+		# Print sequence 60 nts per row
+		if (pos+1) % 60 == 0:
+			yield(fil_seq[pos-59:pos+1])
+		
+	# Remaining sequence is printed
+	if len(seq) % 60 != 0: 
+		yield(fil_seq[len(seq)-(len(seq)%60):])
+		
+
+# Open the file
 for line in mcb185.read_fasta(arg.file):
-	print('>' + line[0])
+
+	# Print genome description
+	print('>'+line[0]) 
 	
-	for seq in line[1:]:
-		for line in sliding(seq,arg.w):
-			print(line)
-'''
+	# Print the filtered sequence
+	for seq in line[1:]: 
+		for line in shiftwin(seq, arg.w): print(line)
+		
+# Note to self: if you find yourself wanting to test this code again in the future, make sure the e.coli.fna data is in the right directory-- hint hint
 
 	
 """
