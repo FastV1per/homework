@@ -8,9 +8,8 @@ import json
 
 with open('GCF_000005845.2_ASM584v2_genomic.gff.gz') as fp:
 	files = json.load(fp)
-	for data in files:
-		print(data["gene"])
-
+	for line in files:
+		print(json.dumps(tabs, indent=4))
 
 """
 python3 70gff.py ~/DATA/E.coli/GCF_000005845.2_ASM584v2_genomic.gff.gz
