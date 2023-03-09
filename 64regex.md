@@ -1,7 +1,5 @@
 Regex Quick Reference
 =====================
-# Setting patterns
-
 # Simple rules
 
 + a 	matches the letter a
