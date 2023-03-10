@@ -71,10 +71,3 @@ QEYDESGPSIVHRKCF*\
 
 print(mcb185.translate(actin_cds.upper()))
 
-"""
-print('Frame 1:', mcb185.translate(actin_cds,1), 
-	  'Frame 2:', mcb185.translate(actin_cds, 2),
-	  'Frame 3:', mcb185.translate(actin_cds, 3),
-	  sep='\n\n'
-)
-"""
