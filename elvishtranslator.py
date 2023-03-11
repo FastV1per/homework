@@ -6,13 +6,104 @@
 
 # prob of a single double triple in separate dictionaries, read them out to develop a model, then generating a language model. 
 
-import random 
-import re
+import random
 
-# Start off by converting certain punctuations into spaces
-punc = '~`1234567890!@#$%^&*()-_+=[]\{}|:;",./<>?'
-spaces = ''*len(punc)
+def train_nth_order_markov_model(filenames, order=1):
+    model = {}
+    for filename in filenames:
+        with open(filename, 'r') as file:
+            text = file.read()
+            text = text.lower()
+            text = ''.join(c for c in text if not c.isdigit())
+            for i in range(len(text) - order):
+                context = text[i:i + order]
+                next_char = text[i + order]
+                if context not in model:
+                    model[context] = {}
+                if next_char not in model[context]:
+                    model[context][next_char] = 0
+                model[context][next_char] += 1
+    return model
 
+def weighted_choice(choices):
+    total = sum(choices.values())
+    r = random.uniform(0, total)
+    upto = 0
+    for c, w in choices.items():
+        if upto + w > r:
+            return c
+        upto += w
+    else:
+    	return None
+
+def generate_sentence(model, order=1):
+    current_context = random.choice(list(model.keys()))
+    sentence = current_context.capitalize()
+    while True:
+        if current_context not in model:
+            break
+        possible_next_chars = model[current_context]
+        next_char = weighted_choice(possible_next_chars)
+        if next_char in ['.', ',', '!', '?', ':', ';', '-', '(', ')', '[', ']', '{', '}']:
+            sentence += ' '
+        else:
+            sentence += next_char
+        if next_char == '.':
+            break
+        current_context = sentence[-order:]
+    return sentence
+
+def generate_text(model, num_sentences, order=1):
+    text = ''
+    for i in range(num_sentences):
+        sentence = generate_sentence(model, order=order)
+        text += sentence + ' '
+    return text
+
+filenames = ['Finnishlang.txt', 'Welshlang.txt']
+order = 2
+model = train_nth_order_markov_model(filenames, order=order)
+while True:
+	generated_text = generate_text(model, num_sentences=5, order=order)
+	print(generated_text)
+	
+"""
+# split the text into sentences 
+sens = lower.split('.')
+# Building Markov
+model = {}
+for i in range(len(sens) - order):
+	
+	# Get the current state and next word
+	state = tuple(sens[i:i+order])
+	next_w = sens[i+order]
+	
+	# Add the next word to the state's list of next words
+	if state not in model:
+		model[state] = []
+	model[state].append(next_w)
+
+# Generate text with Markov
+state = tuple(random.choice(sens[i:i+order]) for i in range(order))
+gen_text = ''.join(state)
+
+while True:
+	next_ws = model.get(state)
+	if not next_ws:
+		state = tuple(random.choice(sens[i:i+order]) for i in range(order))
+		next_ws = model[state]
+	next_w = random.choice(next_ws)
+	gen_text += '' + next_w
+	state = state[1:] + (next_w,)
+	if next_w[-1] in ('.','?','!'):
+		print(gen_text)
+		
+		gen_text = ''.join(random.choice(sens).strip().split())
+		state = tuple(random.choice(words[i:i+order]) for i in range(order))
+"""	
+
+"""
+Test uhh...: something in the likes of this
 f = open('Finnishlang.txt', 'r')
 fin = f.read()
 w = open('Welshlang.txt', 'r')
@@ -61,9 +152,7 @@ def gen_sent():
 
 for i in range(10):
 	print(gen_sent())
-		
-
-
+"""		
 
 """
 finnish_model = {}
@@ -121,11 +210,19 @@ for i in range(num_words):
 
 """
 # Test run 2: worked, however, only produced one long word
-def generate_language(text, order, length):
+
+f = open('Finnishlang.txt', 'r')
+fin = f.read()
+w = open('Welshlang.txt', 'r')
+wel = w.read()
+combo = fin + wel
+
+def generate_language(combo, order, length):
 	
 	transitions = {}
 	
-	words = text.split()
+	words = combo.split()
+
 	
 	for i in range(len(words)-order):
 		current_state = ''.join(words[i:i+order])
@@ -146,12 +243,8 @@ def generate_language(text, order, length):
 		new_text += next_state + ''
 	return new_text
 	
-with open('Finnishlang.txt', 'r') as f:
-	text = f.read()
-with open('Welshlang.txt', 'r') as q:
-	test = q.read()
 
-new_text = generate_language(text, 2, 100)
+new_text = generate_language(combo, 2, 100)
 print(new_text)
 """
 
