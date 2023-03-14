@@ -13,22 +13,51 @@
 # Hint: you can read a file twice, first to get the DNA, then the CDS
 # Hint: check your CDS by examining the source protein
 
-import sys
-import gzip
+# Sorry Korf, take a point off of this one, I can't figure it out
+
+
 import re
 import mcb185
 
-fp = gzip.open(sys.argv[1], 'rt')
-
-all = ''
-for line in fp:
-	all += line
-
-pat1 = 'ORIGIN'
-seq = ''
-
-for match in re.finditer(part1, all):
-	seqstart = match.start()-1
+def find_start_codons(filename):
+	with open(filename, 'r') as f:
+		lines = f.readlines()
+	   
+	sequences = []
+	for i in range(0, len(lines), 2):
+		sequence = lines[i+1].strip()
+		sequences.append(sequence)
+	  
+	   
+	# Find the start codons and CDS coordinates for each sequence
+	start_codons = []
+	cds_coordinates = []
+	for seq in sequences:
+	# Find the start codons
+		start_codons_seq = re.findall(r'ATG', seq)
+		start_codons.extend(start_codons_seq)
+	       
+		# Find the CDS coordinates
+		cds_coords_seq = []
+		
+	    # Count the different start codons
+	    start_codon_counts = {}
+	    for codon in start_codons:
+	    	if codon in start_codon_counts:
+	    		start_codon_counts[codon] += 1
+		else:
+			start_codon_counts[codon] = 1
+	   
+	    # Print the results
+	    print('Start codons:')
+	    for codon, count in start_codon_counts.items():
+	    	print(f'{codon}: {count}')
+	   
+	    print('CDS coordinates:')
+	    for i, seq in enumerate(sequences):
+	    	print(f'Sequence {i+1}:')
+	    	for start, end in cds_coordinates[i]:
+	    		print(f'{start+1}-{end}')
 	
 
 """
